@@ -37,10 +37,7 @@ export class HiddenUrlController {
 
   @Patch('/:mid')
   @Version(process.env.API_VERSION || VERSION_NEUTRAL)
-  updateHiddenUrl(
-    @Param('mid') mid: string,
-    @Body('url') url: string,
-  ): Promise<ResponseType> {
+  updateHiddenUrl(@Param('mid') mid: string, @Body('url') url: string) {
     return this.hiddenUrlService.updateHiddenUrl(mid, url);
   }
 

@@ -85,15 +85,20 @@ export class HiddenUrlService {
     }
   }
 
-  async updateHiddenUrl(mid: string, url: string): Promise<ResponseType> {
+  async updateHiddenUrl(
+    mid: string,
+    url: string,
+  ): Promise<{ shortUrl: string; mid: string }> {
     try {
       const cacheKey = this.getRedisKey(mid);
       await Promise.all([
         this.hiddenUrl.updateOne({ mid }, { originalUrl: url }),
         this.redisCache.set(cacheKey, url, 60 * 60), // 1 hour
       ]);
+
       return {
-        status: HttpStatus.OK,
+        shortUrl: `${DOMAIN}/hidden/${mid}`,
+        mid,
       };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
