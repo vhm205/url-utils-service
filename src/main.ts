@@ -30,6 +30,9 @@ async function bootstrap() {
     );
     app.enableCors({
       origin: env.CORS_ORIGINS?.split('|'),
+      // origin: "*",
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     });
   }
 
@@ -37,6 +40,14 @@ async function bootstrap() {
     exclude: [
       {
         path: 'health/(.*)',
+        method: RequestMethod.GET,
+      },
+      {
+        path: 'mini/(.*)',
+        method: RequestMethod.GET,
+      },
+      {
+        path: 'hidden/(.*)',
         method: RequestMethod.GET,
       },
     ],
@@ -51,4 +62,5 @@ async function bootstrap() {
 
   Logger.log(`🚀  Server is listening on port ${env.PORT}`, 'Bootstrap');
 }
+
 bootstrap();

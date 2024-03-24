@@ -1,13 +1,36 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { MongooseModule } from '@nestjs/mongoose';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ioRedisStore } from '@tirke/node-cache-manager-ioredis';
+
 import { HttpExceptionFilter } from './common/filters';
 import { LoggerMiddleware } from './common/middlewares';
 import { ValidationPipe } from './common/pipes';
-import { HealthModule } from './modules/health/health.module';
+import { MongooseConfigService } from './configs/mongo.config';
+
+import {
+  HealthModule,
+  MiniUrlModule,
+  HiddenUrlModule,
+  QueueModule,
+} from '@modules';
 
 @Module({
-  imports: [HealthModule],
-  controllers: [],
+  imports: [
+    MongooseModule.forRootAsync({
+      useClass: MongooseConfigService,
+    }),
+    CacheModule.register({
+      store: ioRedisStore,
+      url: process.env.REDIS_URL,
+      isGlobal: true,
+    }),
+    HealthModule,
+    QueueModule,
+    MiniUrlModule,
+    HiddenUrlModule,
+  ],
   providers: [
     {
       provide: APP_FILTER,
