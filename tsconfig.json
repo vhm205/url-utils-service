@@ -19,7 +19,10 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@common": ["src/common"],
-      "@environments": ["src/environments"]
+      "@environments": ["src/environments"],
+      "@modules": ["src/modules"],
+      "@schema": ["src/schemas"],
+      "@helpers": ["src/helpers"],
     }
   }
 }
