@@ -10,25 +10,40 @@ on:
     branches: [ "main", "dev" ]
 
 jobs:
+  test:
+    if: ${{ !github.event.act }}
+    runs-on: windows-latest
+    steps:
+      - run: date
+
   build:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [18.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-    - name: Install dependencies
-      run: yarn install
-    - name: Format
-      run: yarn format
-    - name: Build
-      run: yarn build
+        # cache: 'yarn'
 
+    - name: Install dependencies
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: install
+
+    - name: Format with prettier
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: format
+
+    - name: Build code
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: build
