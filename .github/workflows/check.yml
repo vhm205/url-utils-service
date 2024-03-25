@@ -25,7 +25,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        # cache: 'yarn'
 
     - name: Install dependencies
       uses: borales/actions-yarn@v4
@@ -41,3 +40,9 @@ jobs:
       uses: borales/actions-yarn@v4
       with:
         cmd: build
+
+  registry:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
