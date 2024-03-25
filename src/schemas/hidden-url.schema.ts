@@ -6,11 +6,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
   versionKey: false,
 })
 export class HiddenUrl {
-  @Prop({ required: true, unique: true })
-  shortUrl: string;
-
   @Prop({ required: true })
   hiddenUrl: string;
+
+  @Prop({ maxlength: 20, minlength: 3, required: false, default: '' })
+  backHalf: string;
 
   @Prop({ unique: true, required: true })
   mid: string;

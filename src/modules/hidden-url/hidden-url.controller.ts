@@ -26,7 +26,7 @@ export class HiddenUrlController {
   @Post('')
   @Version(process.env.API_VERSION || VERSION_NEUTRAL)
   createHiddenUrl(@Body() body: CreateHiddenUrlDto) {
-    return this.hiddenUrlService.createHiddenUrl(body.url);
+    return this.hiddenUrlService.createHiddenUrl(body);
   }
 
   @Get('/:mid')

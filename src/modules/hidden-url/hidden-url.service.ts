@@ -7,6 +7,7 @@ import { RedisCache } from '@tirke/node-cache-manager-ioredis';
 import { HiddenUrl } from '@schema';
 import { generateUnique } from '@helpers';
 import { ResponseType } from '@common';
+import { CreateHiddenUrlDto } from './dtos/create-hidden-url.dto';
 
 const { DOMAIN } = process.env;
 
@@ -43,17 +44,20 @@ export class HiddenUrlService {
   }
 
   async createHiddenUrl(
-    url: string,
+    payload: CreateHiddenUrlDto,
   ): Promise<{ shortUrl: string; mid: string }> {
     try {
+      const { url, backHalf } = payload;
       const mid = await this.generateMID();
-      const cacheKey = this.getRedisKey(mid);
 
-      const shortUrl = `${DOMAIN}/hidden/${mid}`;
+      const customBackHalf = backHalf ?? mid;
+      const cacheKey = this.getRedisKey(customBackHalf);
+
+      const shortUrl = `${DOMAIN}/hidden/${customBackHalf}`;
 
       await Promise.all([
         this.hiddenUrl.create({
-          shortUrl,
+          backHalf,
           hiddenUrl: url,
           mid,
         }),
@@ -73,7 +77,11 @@ export class HiddenUrlService {
       const originalUrl = await this.redisCache.get<string>(cacheKey);
       if (originalUrl) return originalUrl;
 
-      const result = await this.hiddenUrl.findOne({ mid }).lean();
+      const result = await this.hiddenUrl
+        .findOne({
+          $or: [{ mid }, { backHalf: mid }],
+        })
+        .lean();
 
       if (!result) {
         throw new HttpException('Not Found Mini Link', HttpStatus.NOT_FOUND);
@@ -92,7 +100,12 @@ export class HiddenUrlService {
     try {
       const cacheKey = this.getRedisKey(mid);
       await Promise.all([
-        this.hiddenUrl.updateOne({ mid }, { originalUrl: url }),
+        this.hiddenUrl.updateOne(
+          {
+            $or: [{ mid }, { backHalf: mid }],
+          },
+          { originalUrl: url },
+        ),
         this.redisCache.set(cacheKey, url, 60 * 60), // 1 hour
       ]);
 
@@ -109,7 +122,9 @@ export class HiddenUrlService {
     try {
       const cacheKey = this.getRedisKey(mid);
       await Promise.all([
-        this.hiddenUrl.deleteOne({ mid }),
+        this.hiddenUrl.deleteOne({
+          $or: [{ mid }, { backHalf: mid }],
+        }),
         this.redisCache.del(cacheKey),
       ]);
       return {
