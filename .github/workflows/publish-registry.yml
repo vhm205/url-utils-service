@@ -9,7 +9,6 @@ env:
   # Use ghcr.io for GitHub Container Registry
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
-  GITHUB_REPOSITORY_ID: ${{ github.repository_id }}
 
 jobs:
   push_to_registry:
