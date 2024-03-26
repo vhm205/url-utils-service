@@ -2,7 +2,7 @@ name: Publish Registry CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release" ]
     tags: [ 'v*.*.*' ]
 
 env:
@@ -15,9 +15,9 @@ jobs:
     name: Push Docker image to GitHub Container Registry
 
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
+    permissions:
+      packages: write
+      contents: read
 
     steps:
       - name: Check out the repo
