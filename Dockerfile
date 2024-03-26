@@ -2,9 +2,6 @@ FROM node:18-alpine AS build-stage
 
 WORKDIR /app
 
-# Install Yarn globally (*Optional: See note below*)
-RUN npm install -g yarn
-
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
