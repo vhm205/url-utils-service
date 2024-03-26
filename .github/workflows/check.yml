@@ -5,9 +5,7 @@ name: Check CI
 
 on:
   push:
-    branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
+    branches: ["*"]
 
 jobs:
   build:
@@ -20,15 +18,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-    - name: Install dependencies
-      run: yarn install
-    - name: Format
-      run: yarn format
-    - name: Build
-      run: yarn build
 
+    - name: Install dependencies
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: install
+
+    - name: Format with prettier
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: format
+
+    - name: Build code
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: build
