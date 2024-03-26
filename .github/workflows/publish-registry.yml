@@ -8,7 +8,8 @@ on:
 env:
   # Use ghcr.io for GitHub Container Registry
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: 102205/url-utils-service
+  GITHUB_REPOSITORY_ID: ${{ env.GITHUB_REPOSITORY_ID }}
 
 jobs:
   push_to_registry:
