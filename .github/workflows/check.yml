@@ -3,9 +3,9 @@
 
 name: Check CI
 
-# on:
-#   push:
-#     branches: ["**"]
+on:
+  push:
+    branches: ["**"]
 
 jobs:
   build:
